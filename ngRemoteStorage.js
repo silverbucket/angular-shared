@@ -72,20 +72,23 @@ function (RScfg, $scope) {
   $scope.$watch('RScfg.modules', function () {
     console.log('remoteStorageCtrl initializing modules: ', RScfg.modules);
 
-    for (var mod in RScfg.modules) {
+    var mod, key;
+    for (key in RScfg.modules) {
+      mod = RScfg.modules[key];
+      console.log('claim: '+mod[0]+ ' a: '+mod[1]);
       remoteStorage.access.claim(mod[0], mod[1]);
       if ((mod[2]) && (typeof mod[2].cache === 'boolean') && (!mod[2].cache)) {
         // disable caching
-        remoteStorage.caching.disable(mod[0]);
+        remoteStorage.caching.disable('/'+mod[0]+'/');
       }
-
     }
 
     remoteStorage.displayWidget('remotestorage-connect', {
       redirectUri: window.location.protocol + '//' + window.location.host + '/rscallback.html'
     });
 
-    for (mod in RScfg.modules) {
+    for (key in RScfg.modules) {
+      mod = RScfg.modules[key];
       if ((remoteStorage[mod[0]]) && (typeof remoteStorage[mod[0]].init === 'function')) {
         remoteStorage[mod[0]].init();
       }
