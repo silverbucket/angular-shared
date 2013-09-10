@@ -1,8 +1,7 @@
 angular.module('ngRemoteStorage', []).
 
 value('RemoteStorageConfig', {
-  modules: [],
-  init: function () {}
+  modules: []
 }).
 
 factory('RS', ['$rootScope', '$q', '$timeout',
