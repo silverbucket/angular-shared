@@ -51,9 +51,12 @@ function ($rootScope, $timeout) {
 
 
       $rootScope.$on('message', function (event, e) {
-        //console.log('message event: ', e);
+        console.log('message event: ', e);
 
+        // default values for some options
         var timeout = (typeof e.timeout === 'boolean') ? e.timeout : true;
+        //var important = (typeof e.important === 'boolean') ? e.important : false;
+
         scope.haveMessage = false;
 
         if (typeof e === 'undefined') {

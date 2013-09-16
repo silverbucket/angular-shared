@@ -32,6 +32,7 @@ function ($rootScope, $q, $timeout) {
         (function callRS() {
           if (isConnected()) {
             //console.log('RS connected, sending call');
+            //console.log('module: '+module+' func: '+func);
             try {
               remoteStorage[module][func].apply(null, params).
                 then(function (res) {
