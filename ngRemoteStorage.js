@@ -1,11 +1,11 @@
-angular.module('ngRemoteStorage', []).
+angular.module('ngRemoteStorage', ['cCommandQueue']).
 
 value('RemoteStorageConfig', {
   modules: []
 }).
 
-factory('RS', ['$rootScope', '$q', '$timeout',
-function ($rootScope, $q, $timeout) {
+factory('RS', ['$rootScope', '$q', '$timeout', 'cQueue',
+function ($rootScope, $q, $timeout, cQueue) {
 
   var ready = false;
 
@@ -17,46 +17,56 @@ function ($rootScope, $q, $timeout) {
     ready = true;
   });
 
+  function callRS(job) {
+    console.log('callRS:', job);
+    remoteStorage[job.methods[0]][job.methods[1]].apply(null, job.params).
+      then(function (res) {
+        $rootScope.$apply(function () {
+          if (job.defer) {
+            job.defer.resolve(res);
+          }
+        });
+      }, function (err) {
+        $rootScope.$apply(function () {
+          if (job.defer) {
+            job.defer.reject(err);
+          } else {
+            throw new Error(err);
+          }
+
+        });
+      });
+  }
+
+  var queue = cQueue.init(callRS);
+
   return {
     isConnected: isConnected,
-    call: function (module, func, params) {
+    queue: function (module, func, params) {
+      console.log('RS.queue(' + module + ', ' + func + ', params):', params);
+      queue.add({
+        methods: [module, func],
+        params: params,
+        defer: false,
+        timeout: 0,
+        condition: isConnected
+      });
+    },
+    call: function (module, func, params, failTimeout) {
       var defer = $q.defer();
       console.log('RS.call(' + module + ', ' + func + ', params):', params);
-
       if ((typeof params === 'object') &&
           (typeof params[0] === 'undefined')) {
         defer.reject('RS.call params must be an array');
       } else {
-
-        var delay = 500;
-        (function callRS() {
-          if (isConnected()) {
-            //console.log('RS connected, sending call');
-            //console.log('module: '+module+' func: '+func);
-            try {
-              remoteStorage[module][func].apply(null, params).
-                then(function (res) {
-                  $rootScope.$apply(function () {
-                    defer.resolve(res);
-                  });
-                }, function (err) {
-                  $rootScope.$apply(function () {
-                    defer.reject(err);
-                  });
-                });
-            } catch (e) {
-              //console.log('error : ',e);
-              console.log(e.stack);
-              defer.reject(e.toString());
-            }
-          } else {
-            console.log('RS not connected yet, delaying call ' + delay + 's');
-            if (delay < 30000) {
-              delay = delay + (delay + 500);
-            }
-            $timeout(callRS, delay);
-          }
-        })();
+        // put request onto queue
+        queue.add({
+          methods: [module, func],
+          params: params,
+          defer: defer,
+          timeout: failTimeout,
+          condition: isConnected
+        });
       }
       return defer.promise;
     }
