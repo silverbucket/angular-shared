@@ -1,4 +1,4 @@
-angular.module('ngRemoteStorage', ['cCommandQueue']).
+angular.module('ngRemoteStorage', ['ngCommandQueue']).
 
 value('RemoteStorageConfig', {
   modules: []
