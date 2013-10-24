@@ -79,10 +79,11 @@ function ($rootScope, $timeout) {
         }
         scope.m.timeout = timeout;
         console.log('info message event set: ', scope.m);
+        var message = scope.m.message;
         scope.haveMessage = true;
         if (timeout) {
           $timeout(function () {
-            if (scope.m.timeout) {
+            if ((scope.m.timeout) && (message == scope.m.message)) {
               scope.haveMessage = false;
               scope.m = {type: '', title: '', message: '', timeout: true};
             }
