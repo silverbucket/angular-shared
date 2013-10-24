@@ -18,12 +18,12 @@ function ($rootScope, $timeout) {
 
       var presets = {
         'remotestorage-connect': {
-          type: 'danger',
+          type: 'warning',
           title : 'Connect to remoteStorage',
-          message: 'First things first. You must connect to your remoteStorage'
+          message: 'if you want your changes to persist'
         },
         'sockethub-config': {
-          type: 'danger',
+          type: 'warning',
           title: 'Sockethub configuration needed',
           message: 'You must fill in your Sockethub connection details'
         },
@@ -49,14 +49,10 @@ function ($rootScope, $timeout) {
         }
       };
 
-
       $rootScope.$on('message', function (event, e) {
-        console.log('message event: ', e);
+        //console.log('message event: ', e);
 
-        // default values for some options
         var timeout = (typeof e.timeout === 'boolean') ? e.timeout : true;
-        //var important = (typeof e.important === 'boolean') ? e.important : false;
-
         scope.haveMessage = false;
 
         if (typeof e === 'undefined') {
@@ -76,17 +72,20 @@ function ($rootScope, $timeout) {
             scope.m.title = 'Info';
           } else {
             scope.m.title = "Error";
+            e.type = 'danger';
           }
           scope.m.message = e.message;
           scope.m.type = e.type;
         }
-        //console.log('done processing: ', scope.m);
-
+        scope.m.timeout = timeout;
+        console.log('info message event set: ', scope.m);
         scope.haveMessage = true;
         if (timeout) {
           $timeout(function () {
-            scope.haveMessage = false;
-            scope.m = {type: '', title: '', message: ''};
+            if (scope.m.timeout) {
+              scope.haveMessage = false;
+              scope.m = {type: '', title: '', message: '', timeout: true};
+            }
           }, 4000);
         }
       });
