@@ -1,11 +1,15 @@
 /**
  * directive: message
  */
-angular.module('ngMessages', [])
+angular.module('ngMessages', []).
 
-.directive('message',
-['$rootScope', '$timeout',
-function ($rootScope, $timeout) {
+value('MessagesConfig', {
+  timeout: 4000
+}).
+
+directive('message',
+['$rootScope', '$timeout', 'MessagesConfig',
+function ($rootScope, $timeout, cfg) {
   return {
     restrict: 'A',
     template: '<div class="alert alert-{{ m.type }}" ng-show="haveMessage">'+
@@ -87,7 +91,7 @@ function ($rootScope, $timeout) {
               scope.haveMessage = false;
               scope.m = {type: '', title: '', message: '', timeout: true};
             }
-          }, 4000);
+          }, cfg.timeout);
         }
       });
     }
