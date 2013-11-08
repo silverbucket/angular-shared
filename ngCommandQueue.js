@@ -12,7 +12,7 @@ factory('cQueue', ['$q', '$timeout',
 function ($q, $timeout) {
 
 
-  function cq(executeFunc) {
+  function cq(executeFunc, DEBUG) {
     /**
      * Variable: queue
      *
@@ -58,7 +58,7 @@ function ($q, $timeout) {
 
     function pushToQueue(e) {
       return propertyCheck(e).then(function (e) {
-        console.log('adding to queue: '+e.methods.join(' - '));
+        if (DEBUG) { console.log('adding to queue: '+e.methods.join(' - ')); }
         queue.push(e);
         setTimedCheck = true;
       });
@@ -74,9 +74,10 @@ function ($q, $timeout) {
         // get entry off queue;
         var e = queue[i];
         if (!e.condition()) {
+          if (DEBUG) { console.log(' procSingleEntry, condition NOT met. ',queue[i]); }
           break;
         }
-
+        if (DEBUG) { console.log(' procSingleEntry, condition met. ',queue[i]); }
         queue.splice(i, 1);
         try {
           executeFunc(e);
@@ -97,7 +98,7 @@ function ($q, $timeout) {
         for (i in queue) {
           if ((queue[i].timeout !== 0) &&
               (queue[i].timeout < queue[i].age)) {
-            console.log('timing out ' + queue[i].methods.join('] ['));
+            if (DEBUG) { console.log('timing out ' + queue[i].methods.join('] [')); }
             queue[i].defer.reject('timed out');
             queue.splice(i, 1);
           } else {
@@ -116,11 +117,11 @@ function ($q, $timeout) {
   }
 
   return {
-    init: function (executeFunc) {
+    init: function (executeFunc, DEBUG) {
       if (typeof executeFunc !== 'function') {
         throw new Error('cQueue init must pass a function to call when an entry from the queue is ready. The function should take the queue object as its first param');
       }
-      return new cq(executeFunc);
+      return new cq(executeFunc, DEBUG);
     }
   };
 }]);
