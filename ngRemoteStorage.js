@@ -18,7 +18,7 @@ function ($rootScope, $q, $timeout, cQueue) {
   });
 
   function callRS(job) {
-    console.log('callRS:', job);
+    //console.log('callRS:', job);
     remoteStorage[job.methods[0]][job.methods[1]].apply(null, job.params).
       then(function (res) {
         if (res) {
