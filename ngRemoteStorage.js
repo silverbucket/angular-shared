@@ -8,12 +8,30 @@ factory('RS', ['$rootScope', '$q', '$timeout', 'cQueue',
 function ($rootScope, $q, $timeout, cQueue) {
 
   var ready = false;
+  var connecting = false;
 
   function isConnected() {
     return remoteStorage.remote.connected;
   }
 
+  function isConnecting() {
+    return connecting;
+  }
+
   remoteStorage.on('ready', function () {
+    ready = true;
+    connecting = false;
+  });
+  remoteStorage.on('connecting', function () {
+    ready = false;
+    connecting = true;
+  });
+  remoteStorage.on('authing', function () {
+    connecting = true;
+    ready = false;
+  });
+  remoteStorage.on('disconnected', function () {
+    connecting = false;
     ready = true;
   });
 
@@ -44,6 +62,7 @@ function ($rootScope, $q, $timeout, cQueue) {
 
   return {
     isConnected: isConnected,
+    isConnecting: isConnecting,
     queue: function (module, func, params) {
       console.log('RS.queue(' + module + ', ' + func + ', params):', params);
       queue.add({
