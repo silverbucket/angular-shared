@@ -39,13 +39,11 @@ function ($rootScope, $q, $timeout, cQueue) {
     //console.log('callRS:', job);
     remoteStorage[job.methods[0]][job.methods[1]].apply(null, job.params).
       then(function (res) {
-        if (res) {
-          $rootScope.$apply(function () {
-            if (job.defer) {
-              job.defer.resolve(res);
-            }
-          });
-        }
+        $rootScope.$apply(function () {
+          if (job.defer) {
+            job.defer.resolve(res);
+          }
+        });
       }, function (err) {
         $rootScope.$apply(function () {
           if (job.defer) {

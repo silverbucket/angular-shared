@@ -59,6 +59,7 @@ function ($q, $timeout) {
     function pushToQueue(e) {
       return propertyCheck(e).then(function (e) {
         if (DEBUG) { console.log('adding to queue: '+e.methods.join(' - ')); }
+        e.id = Math.random(0, 9) * 100 / Math.random(0, 9);
         queue.push(e);
         setTimedCheck = true;
       });
@@ -77,7 +78,7 @@ function ($q, $timeout) {
           if (DEBUG) { console.log(' procSingleEntry, condition NOT met. ',queue[i]); }
           break;
         }
-        if (DEBUG) { console.log(' procSingleEntry, condition met. ',queue[i]); }
+        if (DEBUG) { console.log(' procSingleEntry, condition met ['+queue[i].id+']. ',queue[i]); }
         queue.splice(i, 1);
         try {
           executeFunc(e);
