@@ -18,7 +18,7 @@ function ($q, $timeout) {
      *
      * example structure:
      * {
-     *   methods: (array)   // example: ['rss', 'add']
+     *   methods: (array)   // example: ['feeds', 'add']
      *   params: (array),
      *   condition: (function),
      *   defer: (object),

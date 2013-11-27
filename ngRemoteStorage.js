@@ -109,6 +109,7 @@ function (RScfg, $scope) {
       if ((mod[2]) && (typeof mod[2].cache === 'boolean') && (!mod[2].cache)) {
         // disable caching
         remoteStorage.caching.disable('/'+mod[0]+'/');
+        remoteStorage.caching.disable('/public/'+mod[0]+'/');
       }
     }
 
