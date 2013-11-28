@@ -109,11 +109,21 @@ function (RScfg, $scope) {
       if ((mod[2]) && (typeof mod[2].cache === 'boolean') && (!mod[2].cache)) {
         // disable caching
         remoteStorage.caching.disable('/'+mod[0]+'/');
-        remoteStorage.caching.disable('/public/'+mod[0]+'/');
+        if ((mod[2]) && (typeof mod[2].public === 'boolean') && (mod[2].public)) {
+          remoteStorage.caching.enable('/public/'+mod[0]+'/');
+        } else {
+          // disable public caching by default
+          remoteStorage.caching.disable('/public/'+mod[0]+'/');
+        }
       } else {
         // enable caching
         remoteStorage.caching.enable('/'+mod[0]+'/');
-        remoteStorage.caching.enable('/public/'+mod[0]+'/');
+        if ((mod[2]) && (typeof mod[2].public === 'boolean') && (!mod[2].public)) {
+          remoteStorage.caching.disable('/public/'+mod[0]+'/');
+        } else {
+          // enable public caching by default
+          remoteStorage.caching.enable('/public/'+mod[0]+'/');
+        }
       }
     }
 
