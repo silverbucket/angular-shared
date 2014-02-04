@@ -84,8 +84,8 @@ function ($q, $timeout) {
           executeFunc(e);
         } catch (error) {
           console.log('error : ', error);
-          console.log(error.stack);
-          e.promise.reject(error);
+          console.log('stack : ', error.stack);
+          e.defer.reject(error);
         }
         break;
       }
