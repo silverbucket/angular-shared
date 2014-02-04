@@ -1,3 +1,5 @@
+  'use strict';
+
 angular.module('ngRemoteStorage', ['ngCommandQueue']).
 
 value('RemoteStorageConfig', {
@@ -36,24 +38,24 @@ function ($rootScope, $q, $timeout, cQueue) {
   });
 
   function callRS(job) {
-    //console.log('callRS:', job);
-    remoteStorage[job.methods[0]][job.methods[1]].apply(null, job.params).
-      then(function (res) {
-        $rootScope.$apply(function () {
-          if (job.defer) {
-            job.defer.resolve(res);
-          }
-        });
-      }, function (err) {
-        $rootScope.$apply(function () {
-          if (job.defer) {
-            job.defer.reject(err);
-          } else {
-            throw new Error(err);
-          }
-
-        });
+    console.log('callRS:', job);
+    var p = remoteStorage[job.methods[0]][job.methods[1]].apply(null, job.params);
+    p.then(function (res) {
+      $rootScope.$apply(function () {
+        if (job.defer) {
+          job.defer.resolve(res);
+        }
       });
+    }, function (err) {
+      $rootScope.$apply(function () {
+        if (job.defer) {
+          job.defer.reject(err);
+        } else {
+          throw new Error(err);
+        }
+
+      });
+    });
   }
 
   var queue = cQueue.init(callRS);
@@ -84,10 +86,13 @@ function ($rootScope, $q, $timeout, cQueue) {
           params: params,
           defer: defer,
           timeout: failTimeout,
-          condition: isConnected
+          condition: function () { return true; } //isConnected
         });
       }
       return defer.promise;
+    },
+    on: function (module, event, func) {
+      remoteStorage[module].on(event, func);
     }
   };
 }]).
