@@ -24,7 +24,7 @@ function ($rootScope, $timeout, cfg) {
         'remotestorage-connect': {
           type: 'warning',
           title : 'Connect to remoteStorage',
-          message: 'if you want your changes to persist'
+          message: 'to save your session'
         },
         'sockethub-config': {
           type: 'warning',

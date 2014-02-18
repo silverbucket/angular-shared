@@ -51,9 +51,9 @@ function ($rootScope, $q, $timeout, cQueue) {
         if (job.defer) {
           job.defer.reject(err);
         } else {
-          throw new Error(err);
+          console.log('error during RS call: ', err);
+          throw new Error();
         }
-
       });
     });
   }
