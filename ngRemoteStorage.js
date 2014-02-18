@@ -38,7 +38,7 @@ function ($rootScope, $q, $timeout, cQueue) {
   });
 
   function callRS(job) {
-    console.log('callRS:', job);
+    //console.log('callRS:', job);
     var p = remoteStorage[job.methods[0]][job.methods[1]].apply(null, job.params);
     p.then(function (res) {
       $rootScope.$apply(function () {
@@ -64,7 +64,7 @@ function ($rootScope, $q, $timeout, cQueue) {
     isConnected: isConnected,
     isConnecting: isConnecting,
     queue: function (module, func, params) {
-      console.log('RS.queue(' + module + ', ' + func + ', params):', params);
+      //console.log('RS.queue(' + module + ', ' + func + ', params):', params);
       queue.add({
         methods: [module, func],
         params: params,
@@ -75,7 +75,7 @@ function ($rootScope, $q, $timeout, cQueue) {
     },
     call: function (module, func, params, failTimeout) {
       var defer = $q.defer();
-      console.log('RS.call(' + module + ', ' + func + ', params):', params);
+      //console.log('RS.call(' + module + ', ' + func + ', params):', params);
       if ((typeof params === 'object') &&
           (typeof params[0] === 'undefined')) {
         defer.reject('RS.call params must be an array');
